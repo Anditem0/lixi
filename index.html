@@ -3,81 +3,72 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Web Cào Lì Xì Cho Mấy Cu Em</title>
+  <title>Lì Xì Bính Ngọ 2026</title>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Be+Vietnam+Pro:wght@400;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Thẻ Thử Nhân Phẩm Ngày Tết</h1>
-  <div id="status-text" class="instruction">Chọn 1 Bao Để Đổi Đời Đi Mấy Cu e !</div>
+  <h1>LÌ XÌ BÍNH NGỌ 2026 🧧</h1>
+  <div id="status-text" class="instruction">Chọn 1 tờ - Cào lộ vùng số tiền để nhận lộc!</div>
   <div class="grid" id="grid"></div>
   <button id="reset-btn">LÀM MỚI BỘ VÉ</button>
 
   <div id="modal-overlay">
     <div class="modal">
-      <h2 id="modal-title" style="color:var(--bright-red); margin:0"></h2>
-      <p id="modal-msg" style="font-weight:bold; font-size: 1.1rem; margin:15px 0"></p>
-      <button onclick="nextRound()">Tiếp Thục</button>
+      <h2 id="modal-title"></h2>
+      <p id="modal-msg"></p>
+      <p id="comment-msg" style="font-style: italic; color: #8b0000; margin: 10px 0;"></p>
+      <button onclick="nextRound()">TIẾP TỤC CHỌN VÉ</button>
     </div>
   </div>
 
   <script>
     const PRIZES = [
-      { val: 10000, title: "Chúc Mừng Cu em, Cu em Quá Hên :)))", weight: 45, type: 'small' },
-      { val: 20000, title: "Đỉnh Đấy Được 'NHỮNG TẬN' 20k  ", weight: 30, type: 'medium' },
-      { val: 50000, title: "Wow Đủ Tiền Nạp Fai Fai rồi :))", weight: 15, type: 'medium' },
-      { val: 100000, title: "QUÁ NGON", weight: 6, type: 'large' },
-      { val: 200000, title: "ĐẠI LỘC", weight: 3, type: 'large' },
+      { val: 10000, title: "LỘC NHỎ", weight: 60, type: 'small' },
+      { val: 20000, title: "NIỀM VUI", weight: 20, type: 'medium' },
+      { val: 50000, title: "MAY MẮN", weight: 12, type: 'medium' },
+      { val: 100000, title: "QUÁ NGON", weight: 5, type: 'large' },
+      { val: 200000, title: "ĐẠI LỘC", weight: 2, type: 'large' },
       { val: 500000, title: "ÔNG HOÀNG", weight: 1, type: 'jackpot' }
     ];
     const WISHES = [
       "Vạn Sự Như Ý", "Phát Tài Phát Lộc", "Sức Khỏe Dồi Dào", "An Khang Thịnh Vượng",
       "Cung hỷ phát tài", "Phúc lộc đầy nhà", "Bình an mạnh khỏe", "Tân niên đại cát"
     ];
+
+    // Câu trêu chọc hài hước cho giải nhỏ (10k, 20k, 50k)
+    const teaseComments = [
+      "10k thôi mà, đủ mua bịch kẹo cao su nhai cho đỡ buồn miệng! Cố lên lần sau nhé em iu!",
+      "Trúng 20k, chắc đủ tiền đổ xăng đi xin lộc nhà người ta chứ gì nữa hahaha!",
+      "50k à? Ủa sao không trúng 500k luôn cho rồi, để tui còn được ké ké ké!",
+      "Lộc nhỏ xíu xiu như cái... hạt tiêu, nhưng Tết mà, có còn hơn không đúng hem?",
+      "Trúng nhỏ vậy chắc kiếp trước tui nợ bạn tiền lì xì, giờ trả dần trả mòn đây! Haha"
+    ];
+
+    // Câu khen ngợi cho giải lớn (100k+)
+    const praiseComments = [
+      "Wow, may mắn quá trời, chúc mừng bạn nhé!",
+      "Đại lộc đến tay, năm mới giàu sang đây!",
+      "Bạn là ông hoàng lộc lá, tuyệt vời quá!",
+      "Trúng lớn rồi, chúc năm Bính Ngọ đại phát!",
+      "Lộc đầy nhà, may mắn liên tục cho bạn!"
+    ];
+
     let isAnyCardActive = false;
 
-    // Web Audio API cho âm thanh flip tự động
-    let audioCtx = null;
-    let flipBuffer = null;
-
-    async function initAudio() {
-      try {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        await audioCtx.resume(); // resume ngay lập tức
-        const response = await fetch('nhactet.mp3');
-        if (!response.ok) throw new Error('File nhactet.mp3 không tồn tại');
-        const arrayBuffer = await response.arrayBuffer();
-        flipBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-        console.log('Âm thanh flip đã load OK');
-
-        // Phát silent để chắc chắn context active
-        const source = audioCtx.createBufferSource();
-        source.buffer = flipBuffer;
-        source.connect(audioCtx.destination);
-        source.start(0, 0, 0.001);
-      } catch (e) {
-        console.error('Lỗi âm thanh:', e.message);
-      }
-    }
-
-    initAudio(); // Gọi ngay khi load trang
-
-    function playFlip() {
-      if (!audioCtx || !flipBuffer || audioCtx.state !== 'running') return;
-      const source = audioCtx.createBufferSource();
-      source.buffer = flipBuffer;
-      source.connect(audioCtx.destination);
-      source.start();
+    function getRandomComment(val) {
+      let comments = (val <= 50000) ? teaseComments : praiseComments;
+      return comments[Math.floor(Math.random() * comments.length)];
     }
 
     function createCard(container, wish) {
       const prizeObj = (() => {
-        let total = PRIZES.reduce((sum, p) => sum + p.weight, 0);
-        let rand = Math.random() * total;
-        for (let p of PRIZES) {
-          if (rand < p.weight) return p;
-          rand -= p.weight;
+        let total = PRIZES.reduce((sum, prize) => sum + prize.weight, 0);
+        let random = Math.random() * total;
+        for (let prize of PRIZES) {
+          if (random < prize.weight) return prize;
+          random -= prize.weight;
         }
         return PRIZES[0];
       })();
@@ -125,9 +116,6 @@
         isAnyCardActive = true;
         wrapper.classList.add('flipped');
         document.querySelectorAll('.card-container').forEach(c => c !== wrapper && c.classList.add('locked'));
-
-        playFlip(); // Phát âm thanh flip
-
         drawCover();
       };
 
@@ -156,7 +144,8 @@
             canvas.remove();
             shootFireworks(prizeObj.type);
             document.getElementById('modal-title').innerText = prizeObj.title;
-            document.getElementById('modal-msg').innerText = `Bạn nhận được ${prizeObj.val.toLocaleString()}đ!`;
+            document.getElementById('modal-msg').innerText = `Chúc mừng bạn nhận được ${prizeObj.val.toLocaleString()}đ!`;
+            document.getElementById('comment-msg').innerText = getRandomComment(prizeObj.val);
             document.getElementById('modal-overlay').style.display = 'flex';
           }, 400);
         }
