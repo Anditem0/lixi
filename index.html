@@ -37,16 +37,34 @@
       "Cung hỷ phát tài", "Phúc lộc đầy nhà", "Bình an mạnh khỏe", "Tân niên đại cát"
     ];
 
-    // Câu trêu chọc hài hước cho giải nhỏ (10k, 20k, 50k)
-    const teaseComments = [
-      "10k thôi mà, đủ mua bịch kẹo cao su nhai cho đỡ buồn miệng! Cố lên lần sau nhé em iu!",
-      "Trúng 20k, chắc đủ tiền đổ xăng đi xin lộc nhà người ta chứ gì nữa hahaha!",
-      "50k à? Ủa sao không trúng 500k luôn cho rồi, để tui còn được ké ké ké!",
-      "Lộc nhỏ xíu xiu như cái... hạt tiêu, nhưng Tết mà, có còn hơn không đúng hem?",
-      "Trúng nhỏ vậy chắc kiếp trước tui nợ bạn tiền lì xì, giờ trả dần trả mòn đây! Haha"
+    // Câu trêu riêng cho 10k
+    const tease10k = [
+      "10k thôi hả? Đủ mua bịch bim bim vị cay, nhai cho đỡ thèm lộc lớn!",
+      "Trúng 10k, chắc kiếp trước bạn cho tui xin 1k đi ăn sáng, giờ trả lãi đây haha!",
+      "10k à? Đủ đổ xăng xe đạp đi xin lì xì nhà hàng xóm thôi, cố lên năm sau nhé!",
+      "Lộc nhỏ tí teo như cái que kem que, nhưng Tết mà, có còn hơn không đúng hem?",
+      "10k này chắc để mua... 1 cây kẹo mút, còn lại để dành hy vọng trúng lớn tiếp!"
     ];
 
-    // Câu khen ngợi cho giải lớn (100k+)
+    // Câu trêu riêng cho 20k
+    const tease20k = [
+      "20k? Đủ tiền mua gói mì tôm cao cấp ăn Tết, nhưng đừng có khoe với ai nha!",
+      "Trúng 20k, chắc bạn nợ tui 19k từ kiếp trước, giờ trả có lãi rồi đó!",
+      "20k thôi mà, đủ mua 1 cốc trà sữa size nhỏ, uống xong buồn vì không trúng lớn hơn!",
+      "20k à? Ủa sao không trúng 200k luôn cho rồi, để tui còn được ké ké ké!",
+      "Lộc 20k như kiểu 'có tiền nhưng chưa giàu', Tết vui là được rồi ha!"
+    ];
+
+    // Câu trêu riêng cho 50k
+    const tease50k = [
+      "50k? Đủ tiền đổ xăng xe máy đi chơi Tết, nhưng đừng có đi xa quá kẻo hết tiền về!",
+      "Trúng 50k, chắc bạn đang nghĩ 'thôi cũng được, mua ít bánh chưng ăn tạm' hahaha!",
+      "50k à? Sao không trúng 500k luôn cho rồi, để tui còn được nhờ mua vé số ké!",
+      "Lộc 50k như kiểu 'gần giàu nhưng chưa tới', cố lên lần sau nhé ông bạn!",
+      "50k này chắc để mua... 1 chai bia Tết, uống xong buồn vì không trúng ông hoàng!"
+    ];
+
+    // Câu khen cho giải lớn
     const praiseComments = [
       "Wow, may mắn quá trời, chúc mừng bạn nhé!",
       "Đại lộc đến tay, năm mới giàu sang đây!",
@@ -58,7 +76,11 @@
     let isAnyCardActive = false;
 
     function getRandomComment(val) {
-      let comments = (val <= 50000) ? teaseComments : praiseComments;
+      let comments;
+      if (val === 10000) comments = tease10k;
+      else if (val === 20000) comments = tease20k;
+      else if (val === 50000) comments = tease50k;
+      else comments = praiseComments;
       return comments[Math.floor(Math.random() * comments.length)];
     }
 
