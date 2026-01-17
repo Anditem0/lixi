@@ -18,7 +18,7 @@
     <div class="modal">
       <h2 id="modal-title" style="color:var(--bright-red); margin:0"></h2>
       <p id="modal-msg" style="font-weight:bold; font-size: 1.1rem; margin:15px 0"></p>
-      <button id="next-btn" disabled>TIẾP TỤC (đã khóa)</button>
+      <button onclick="nextRound()">TIẾP TỤC</button>
     </div>
   </div>
 
@@ -37,32 +37,43 @@
     ];
     let isAnyCardActive = false;
 
-    // File nhạc cục bộ - chỉ 1 instance duy nhất
-    const flipSound = new Audio('nhactet.mp3');
-    flipSound.volume = 0.7;
+    // Web Audio API để tự động phát âm thanh ngay khi load (bypass autoplay block tốt hơn)
+    let audioCtx = null;
+    let flipBuffer = null;
 
-    // Unlock audio tự động càng sớm càng tốt (muted silent play để "thả" policy)
-    function tryUnlockAudio() {
-      if (flipSound.dataset.unlocked) return;
-      flipSound.muted = true;
-      flipSound.currentTime = 0;
-      flipSound.play().then(() => {
-        flipSound.pause();
-        flipSound.currentTime = 0;
-        flipSound.muted = false;
-        flipSound.dataset.unlocked = 'true';
-        console.log('Âm thanh đã unlock tự động!');
-      }).catch(() => {
-        console.log('Cần tap màn hình để unlock âm thanh (browser block autoplay)');
-      });
+    // Load file nhactet.mp3 một lần duy nhất
+    async function loadFlipSound() {
+      try {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const response = await fetch('nhactet.mp3');
+        const arrayBuffer = await response.arrayBuffer();
+        flipBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+        console.log('Đã load âm thanh thành công');
+        // Phát thử silent để resume context ngay
+        const source = audioCtx.createBufferSource();
+        source.buffer = flipBuffer;
+        source.connect(audioCtx.destination);
+        source.start(0, 0, 0.001); // Phát 1ms silent để unlock context
+      } catch (e) {
+        console.error('Lỗi load âm thanh:', e);
+      }
     }
 
-    // Thử unlock ngay khi load
-    tryUnlockAudio();
+    // Gọi load ngay khi trang mở
+    loadFlipSound();
 
-    // Nếu vẫn block, tap bất kỳ đâu để unlock (touchend tốt hơn cho mobile)
-    document.body.addEventListener('touchend', tryUnlockAudio, { once: true, passive: true });
-    document.body.addEventListener('click', tryUnlockAudio, { once: true });
+    // Hàm phát âm thanh flip (không overlap, reset mỗi lần)
+    function playFlipSound() {
+      if (!audioCtx || !flipBuffer) return;
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume().then(() => playFlipSound());
+        return;
+      }
+      const source = audioCtx.createBufferSource();
+      source.buffer = flipBuffer;
+      source.connect(audioCtx.destination);
+      source.start(0);
+    }
 
     function createCard(container, wish) {
       const prizeObj = (() => {
@@ -113,16 +124,14 @@
       }
       document.fonts.ready.then(drawCover);
 
-      // Flip card
       const flipCard = () => {
         if (isAnyCardActive || wrapper.classList.contains('flipped')) return;
         isAnyCardActive = true;
         wrapper.classList.add('flipped');
         document.querySelectorAll('.card-container').forEach(c => c !== wrapper && c.classList.add('locked'));
 
-        // Phát âm thanh: reset về đầu rồi play (không overlap)
-        flipSound.currentTime = 0;
-        flipSound.play().catch(e => console.log('Lỗi flip sound:', e));
+        // Phát âm thanh flip
+        playFlipSound();
 
         drawCover();
       };
@@ -154,11 +163,6 @@
             document.getElementById('modal-title').innerText = prizeObj.title;
             document.getElementById('modal-msg').innerText = `Bạn nhận được ${prizeObj.val.toLocaleString()}đ!`;
             document.getElementById('modal-overlay').style.display = 'flex';
-            // Khóa nút tiếp tục
-            const nextBtn = document.getElementById('next-btn');
-            nextBtn.disabled = true;
-            nextBtn.style.opacity = '0.5';
-            nextBtn.innerText = 'ĐÃ KHÓA - CHƠI LẠI BẰNG NÚT LÀM MỚI';
           }, 400);
         }
       }
@@ -191,6 +195,8 @@
 
     function nextRound() {
       document.getElementById('modal-overlay').style.display = 'none';
+      isAnyCardActive = false;
+      document.querySelectorAll('.card-container').forEach(c => c.classList.remove('locked'));
     }
 
     function start() {
