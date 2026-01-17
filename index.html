@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lì Xì Bính Ngọ 2026</title>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Be+Vietnam+Pro:wght@400;900&display=swap" rel="stylesheet">
+  <style>
+    :root { --dark-red: #8b0000; --bright-red: #d63031; --gold: #d4af37; --light-gold: #f1c40f; }
+    body {
+      margin: 0; background: #4a0000 radial-gradient(circle, #8b0000 0%, #1a0000 100%);
+      font-family: 'Be Vietnam Pro', sans-serif; display: flex; flex-direction: column; align-items: center;
+      color: #fff; touch-action: manipulation; min-height: 100vh; overflow-x: hidden;
+    }
+    h1 { font-size: 1.8rem; color: var(--light-gold); margin: 25px 0 5px; font-weight: 900; text-transform: uppercase; text-shadow: 0 4px 15px rgba(0,0,0,0.6); }
+    .instruction { margin-bottom: 20px; color: #feca57; font-weight: bold; font-size: 0.9rem; text-align: center; }
+    
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; max-width: 600px; padding: 10px; }
+
+    .card-container { width: 165px; height: 235px; perspective: 1000px; cursor: pointer; }
+    .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d; }
+    .card-container.flipped .card-inner { transform: rotateY(180deg); }
+
+    /* THIẾT KẾ MỚI MẶT TRƯỚC BAO LÌ XÌ */
+    .card-front {
+      position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+      border-radius: 12px; z-index: 2;
+      background: linear-gradient(145deg, #e63946, #8b0000);
+      border: 3px solid var(--gold);
+      box-shadow: inset 0 0 15px rgba(0,0,0,0.5), 0 10px 20px rgba(0,0,0,0.5);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Tạo họa tiết góc cho bao lì xì */
+    .card-front::before {
+      content: ""; position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px;
+      border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 8px; pointer-events: none;
+    }
+
+    .card-front .corner {
+      position: absolute; width: 30px; height: 30px; border: 2px solid var(--gold);
+    }
+    .top-left { top: 5px; left: 5px; border-right: none; border-bottom: none; border-radius: 8px 0 0 0; }
+    .bottom-right { bottom: 5px; right: 5px; border-left: none; border-top: none; border-radius: 0 0 8px 0; }
+
+    .card-front .emblem {
+      width: 90px; height: 90px; border: 3px double var(--gold);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-family: 'Great Vibes', cursive; font-size: 3rem; color: var(--gold);
+      background: rgba(255,255,255,0.05);
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+      margin-bottom: 10px;
+    }
+
+    .card-front .year-text {
+      font-size: 1.2rem; font-weight: 900; color: var(--light-gold);
+      text-shadow: 1px 1px 2px #000; letter-spacing: 2px;
+    }
+
+    /* Mặt sau giữ nguyên logic cũ */
+    .card-back {
+      position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+      border-radius: 12px; transform: rotateY(180deg); background: #fffef0;
+      border: 3px solid var(--gold); overflow: hidden;
+    }
+    .card-content { position: absolute; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+    .card-content .amount { font-size: 1.8rem; font-weight: 900; color: #27ae60; }
+    canvas { position: absolute; top: 0; left: 0; z-index: 3; touch-action: none; }
+
+    .locked { opacity: 0.3; pointer-events: none; filter: grayscale(0.5); }
+
+    #modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 100; }
+    .modal { background: #fff; color: #333; padding: 25px; border-radius: 20px; text-align: center; max-width: 280px; border: 5px solid var(--gold); }
+    .modal button { background: var(--dark-red); color: #fff; border: none; padding: 10px 25px; border-radius: 50px; cursor: pointer; font-weight: 900; margin-top: 15px; }
+    #reset-btn { margin: 25px; padding: 12px 40px; background: var(--light-gold); color: #8b0000; border: none; border-radius: 50px; font-weight: 900; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <h1>LÌ XÌ BÍNH NGỌ 2026 🧧</h1>
+  <div id="status-text" class="instruction">Chạm vào bao lì xì để mở vận may!</div>
+
+  <div class="grid" id="grid"></div>
+  <button id="reset-btn">LÀM MỚI BỘ VÉ</button>
+
+  <div id="modal-overlay">
+    <div class="modal">
+      <h2 id="modal-title" style="color:var(--bright-red); margin:0"></h2>
+      <p id="modal-msg" style="font-weight:bold; font-size: 1.1rem; margin:15px 0"></p>
+      <button onclick="nextRound()">TIẾP TỤC</button>
+    </div>
+  </div>
+
+  <script>
+    const PRIZES = [
+      { val: 10000, title: "LỘC NHỎ", weight: 60, type: 'small' },
+      { val: 20000, title: "NIỀM VUI", weight: 20, type: 'medium' },
+      { val: 50000, title: "MAY MẮN", weight: 12, type: 'medium' },
+      { val: 100000, title: "QUÁ NGON", weight: 5, type: 'large' },
+      { val: 200000, title: "ĐẠI LỘC", weight: 2, type: 'large' },
+      { val: 500000, title: "ÔNG HOÀNG", weight: 1, type: 'jackpot' }
+    ];
+
+    const WISHES = ["Vạn Sự Như Ý", "Phát Tài Phát Lộc", "Sức Khỏe Dồi Dào", "An Khang Thịnh Vượng", "Cung hỷ phát tài", "Phúc lộc đầy nhà", "Bình an mạnh khỏe", "Tân niên đại cát"];
+
+    let isAnyCardActive = false;
+
+    function createCard(container, wish) {
+      const prizeObj = (() => {
+        let t = PRIZES.reduce((s, p) => s + p.weight, 0);
+        let r = Math.random() * t;
+        for (let p of PRIZES) { if (r < p.weight) return p; r -= p.weight; }
+        return PRIZES[0];
+      })();
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'card-container';
+      wrapper.innerHTML = `
+        <div class="card-inner">
+          <div class="card-front">
+            <div class="corner top-left"></div>
+            <div class="corner bottom-right"></div>
+            <div class="emblem">🧧</div>
+            <div class="year-text">2026</div>
+            <div style="font-size:0.7rem; color:var(--gold); margin-top:5px; font-weight:bold;">CHÚC MỪNG NĂM MỚI</div>
+          </div>
+          <div class="card-back">
+            <div class="card-content">
+              <div style="font-size:0.7rem; font-weight:bold; color:#8b0000">LỘC XUÂN</div>
+              <div class="amount">${prizeObj.val.toLocaleString()}đ</div>
+            </div>
+            <canvas width="165" height="235"></canvas>
+          </div>
+        </div>
+      `;
+
+      const canvas = wrapper.querySelector('canvas');
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      let isDrawing = false, isCleared = false;
+
+      function drawCover() {
+        const grd = ctx.createLinearGradient(0, 0, 165, 235);
+        grd.addColorStop(0, '#f1c40f'); grd.addColorStop(1, '#d4af37');
+        ctx.fillStyle = grd; ctx.fillRect(0, 0, 165, 235);
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.font = '24px "Great Vibes", cursive'; ctx.fillStyle = '#8b0000';
+        const words = wish.split(' ');
+        ctx.fillText(words.slice(0, Math.ceil(words.length/2)).join(' '), 82, 90);
+        ctx.fillText(words.slice(Math.ceil(words.length/2)).join(' '), 82, 130);
+        ctx.font = 'bold 10px Arial'; ctx.fillText('CÀO VÙNG TRUNG TÂM', 82, 200);
+      }
+
+      wrapper.onclick = () => {
+        if (isAnyCardActive || wrapper.classList.contains('flipped')) return;
+        isAnyCardActive = true;
+        wrapper.classList.add('flipped');
+        document.querySelectorAll('.card-container').forEach(c => c !== wrapper && c.classList.add('locked'));
+        drawCover();
+      };
+
+      function scratch(e) {
+        if (!isDrawing || isCleared || !wrapper.classList.contains('flipped')) return;
+        const rect = canvas.getBoundingClientRect();
+        const x = ((e.clientX || e.touches[0].clientX) - rect.left) * (canvas.width / rect.width);
+        const y = ((e.clientY || e.touches[0].clientY) - rect.top) * (canvas.height / rect.height);
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.beginPath(); ctx.arc(x, y, 20, 0, Math.PI * 2); ctx.fill();
+        const imgData = ctx.getImageData(30, 80, 100, 70);
+        let clear = 0;
+        for (let i = 3; i < imgData.data.length; i += 4) if (imgData.data[i] === 0) clear++;
+        if (clear > (imgData.data.length / 4) * 0.8) {
+          isCleared = true;
+          canvas.style.transition = "opacity 0.6s"; canvas.style.opacity = '0';
+          setTimeout(() => {
+            canvas.remove();
+            shootFireworks(prizeObj.type);
+            document.getElementById('modal-title').innerText = prizeObj.title;
+            document.getElementById('modal-msg').innerText = `Bạn nhận được ${prizeObj.val.toLocaleString()}đ!`;
+            document.getElementById('modal-overlay').style.display = 'flex';
+          }, 400);
+        }
+      }
+
+      canvas.onmousedown = () => isDrawing = true;
+      canvas.ontouchstart = (e) => { isDrawing = true; e.preventDefault(); };
+      window.onmouseup = () => isDrawing = false;
+      window.ontouchend = () => isDrawing = false;
+      canvas.onmousemove = scratch;
+      canvas.ontouchmove = (e) => { scratch(e); e.preventDefault(); };
+      container.appendChild(wrapper);
+    }
+
+    function shootFireworks(type) {
+      const colors = ['#f1c40f', '#e74c3c', '#ffffff', '#ff9f43'];
+      if (type === 'small') confetti({ particleCount: 40, spread: 50, origin: { y: 0.7 } });
+      else if (type === 'medium') confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+      else if (type === 'large') confetti({ particleCount: 300, spread: 120, origin: { y: 0.6 }, scalar: 1.2, colors });
+      else if (type === 'jackpot') {
+        const end = Date.now() + 5000;
+        (function frame() {
+          confetti({ particleCount: 20, angle: 60, spread: 100, origin: { x: 0, y: 0.6 }, colors, scalar: 1.4 });
+          confetti({ particleCount: 20, angle: 120, spread: 100, origin: { x: 1, y: 0.6 }, colors, scalar: 1.4 });
+          confetti({ particleCount: 25, angle: 90, spread: 160, origin: { x: 0.5, y: 0.7 }, colors, scalar: 1.6 });
+          if (Date.now() < end) requestAnimationFrame(frame);
+        }());
+      }
+    }
+
+    function nextRound() {
+      document.getElementById('modal-overlay').style.display = 'none';
+      isAnyCardActive = false;
+      document.querySelectorAll('.card-container').forEach(c => {
+        if (!c.querySelector('canvas')) { c.style.opacity = "0.2"; c.style.pointerEvents = "none"; }
+        else c.classList.remove('locked');
+      });
+    }
+
+    function start() {
+      const grid = document.getElementById('grid'); grid.innerHTML = '';
+      isAnyCardActive = false;
+      let shuffled = [...WISHES].sort(() => Math.random() - 0.5);
+      for (let i = 0; i < 6; i++) createCard(grid, shuffled[i]);
+    }
+
+    document.getElementById('reset-btn').onclick = start;
+    start();
+  </script>
+</body>
+</html>
