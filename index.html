@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Lì Xì Bính Ngọ 2026</title>
+  <title>Web Cào Lì Xì Cho Mấy Cu Em</title>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Be+Vietnam+Pro:wght@400;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>LÌ XÌ BÍNH NGỌ 2026 🧧</h1>
-  <div id="status-text" class="instruction">Chạm vào bao lì xì để mở vận may!</div>
+  <h1>Thẻ Thử Nhân Phẩm Ngày Tết</h1>
+  <div id="status-text" class="instruction">Chọn 1 Bao Để Đổi Đời Đi Mấy Cu e !</div>
   <div class="grid" id="grid"></div>
   <button id="reset-btn">LÀM MỚI BỘ VÉ</button>
 
@@ -18,17 +18,17 @@
     <div class="modal">
       <h2 id="modal-title" style="color:var(--bright-red); margin:0"></h2>
       <p id="modal-msg" style="font-weight:bold; font-size: 1.1rem; margin:15px 0"></p>
-      <button onclick="nextRound()">TIẾP TỤC</button>
+      <button onclick="nextRound()">Tiếp Thục</button>
     </div>
   </div>
 
   <script>
     const PRIZES = [
-      { val: 10000, title: "LỘC NHỎ", weight: 60, type: 'small' },
-      { val: 20000, title: "NIỀM VUI", weight: 20, type: 'medium' },
-      { val: 50000, title: "MAY MẮN", weight: 12, type: 'medium' },
-      { val: 100000, title: "QUÁ NGON", weight: 5, type: 'large' },
-      { val: 200000, title: "ĐẠI LỘC", weight: 2, type: 'large' },
+      { val: 10000, title: "Chúc Mừng Cu em, Cu em Quá Hên :)))", weight: 45, type: 'small' },
+      { val: 20000, title: "Đỉnh Đấy Được 'NHỮNG TẬN' 20k  ", weight: 30, type: 'medium' },
+      { val: 50000, title: "Wow Đủ Tiền Nạp Fai Fai rồi :))", weight: 15, type: 'medium' },
+      { val: 100000, title: "QUÁ NGON", weight: 6, type: 'large' },
+      { val: 200000, title: "ĐẠI LỘC", weight: 3, type: 'large' },
       { val: 500000, title: "ÔNG HOÀNG", weight: 1, type: 'jackpot' }
     ];
     const WISHES = [
