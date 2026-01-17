@@ -37,42 +37,42 @@
     ];
     let isAnyCardActive = false;
 
-    // Web Audio API để tự động phát âm thanh ngay khi load (bypass autoplay block tốt hơn)
+    // Web Audio API cho âm thanh tự phát
     let audioCtx = null;
     let flipBuffer = null;
 
-    // Load file nhactet.mp3 một lần duy nhất
-    async function loadFlipSound() {
+    async function initAudio() {
       try {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') {
+          await audioCtx.resume();
+        }
         const response = await fetch('nhactet.mp3');
+        if (!response.ok) throw new Error('File nhactet.mp3 không tồn tại hoặc lỗi tải');
         const arrayBuffer = await response.arrayBuffer();
         flipBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-        console.log('Đã load âm thanh thành công');
-        // Phát thử silent để resume context ngay
+        console.log('Âm thanh đã load thành công');
+
+        // Phát silent ngay để resume context
         const source = audioCtx.createBufferSource();
         source.buffer = flipBuffer;
         source.connect(audioCtx.destination);
-        source.start(0, 0, 0.001); // Phát 1ms silent để unlock context
+        source.start(0, 0, 0.001);
       } catch (e) {
-        console.error('Lỗi load âm thanh:', e);
+        console.error('Lỗi khởi tạo âm thanh:', e.message);
       }
     }
 
-    // Gọi load ngay khi trang mở
-    loadFlipSound();
+    // Gọi ngay khi load trang
+    initAudio();
 
-    // Hàm phát âm thanh flip (không overlap, reset mỗi lần)
-    function playFlipSound() {
+    // Hàm phát flip sound
+    function playFlip() {
       if (!audioCtx || !flipBuffer) return;
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume().then(() => playFlipSound());
-        return;
-      }
       const source = audioCtx.createBufferSource();
       source.buffer = flipBuffer;
       source.connect(audioCtx.destination);
-      source.start(0);
+      source.start();
     }
 
     function createCard(container, wish) {
@@ -130,8 +130,7 @@
         wrapper.classList.add('flipped');
         document.querySelectorAll('.card-container').forEach(c => c !== wrapper && c.classList.add('locked'));
 
-        // Phát âm thanh flip
-        playFlipSound();
+        playFlip();  // Phát âm thanh
 
         drawCover();
       };
