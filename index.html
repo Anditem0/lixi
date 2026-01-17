@@ -33,6 +33,9 @@
     const WISHES = ["Vạn Sự Như Ý", "Phát Tài Phát Lộc", "Sức Khỏe Dồi Dào", "An Khang Thịnh Vượng", "Cung hỷ phát tài", "Phúc lộc đầy nhà", "Bình an mạnh khỏe", "Tân niên đại cát"];
     let isAnyCardActive = false;
 
+    const flipSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-card-flip-1939.mp3');
+    flipSound.volume = 0.6;
+
     function createCard(container, wish) {
       const prizeObj = (() => {
         let t = PRIZES.reduce((s, p) => s + p.weight, 0);
@@ -82,13 +85,18 @@
         isAnyCardActive = true;
         wrapper.classList.add('flipped');
         document.querySelectorAll('.card-container').forEach(c => c !== wrapper && c.classList.add('locked'));
+        flipSound.currentTime = 0;
+        flipSound.play().catch(e => console.log('Autoplay prevented:', e));
         drawCover();
       };
+
       wrapper.ontouchstart = (e) => {
         e.preventDefault();
         if (isAnyCardActive || wrapper.classList.contains('flipped')) return;
         wrapper.classList.add('flipped');
         document.querySelectorAll('.card-container').forEach(c => c !== wrapper && c.classList.add('locked'));
+        flipSound.currentTime = 0;
+        flipSound.play().catch(e => console.log('Autoplay prevented:', e));
         drawCover();
       };
 
