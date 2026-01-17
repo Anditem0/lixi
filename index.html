@@ -13,6 +13,7 @@
   <div id="status-text" class="instruction">Chạm vào bao lì xì để mở vận may!</div>
   <div class="grid" id="grid"></div>
   <button id="reset-btn">LÀM MỚI BỘ VÉ</button>
+
   <div id="modal-overlay">
     <div class="modal">
       <h2 id="modal-title" style="color:var(--bright-red); margin:0"></h2>
@@ -30,19 +31,48 @@
       { val: 200000, title: "ĐẠI LỘC", weight: 2, type: 'large' },
       { val: 500000, title: "ÔNG HOÀNG", weight: 1, type: 'jackpot' }
     ];
-    const WISHES = ["Vạn Sự Như Ý", "Phát Tài Phát Lộc", "Sức Khỏe Dồi Dào", "An Khang Thịnh Vượng", "Cung hỷ phát tài", "Phúc lộc đầy nhà", "Bình an mạnh khỏe", "Tân niên đại cát"];
+    const WISHES = [
+      "Vạn Sự Như Ý", "Phát Tài Phát Lộc", "Sức Khỏe Dồi Dào", "An Khang Thịnh Vượng",
+      "Cung hỷ phát tài", "Phúc lộc đầy nhà", "Bình an mạnh khỏe", "Tân niên đại cát"
+    ];
     let isAnyCardActive = false;
 
+    // Âm thanh flip card
     const flipSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-card-flip-1939.mp3');
     flipSound.volume = 0.6;
 
+    // Unlock audio trên mobile (fix không nghe tiếng)
+    let audioUnlocked = false;
+    function unlockAudio() {
+      if (audioUnlocked) return;
+      audioUnlocked = true;
+      flipSound.currentTime = 0;
+      flipSound.volume = 0;           // silent để unlock
+      flipSound.play()
+        .then(() => {
+          flipSound.pause();
+          flipSound.currentTime = 0;
+          flipSound.volume = 0.6;     // khôi phục âm lượng
+          console.log('Audio đã được mở khóa!');
+        })
+        .catch(e => console.log('Unlock audio lỗi:', e));
+    }
+
+    // Gắn sự kiện unlock khi người dùng tương tác lần đầu
+    document.body.addEventListener('click', unlockAudio, { once: true });
+    document.body.addEventListener('touchstart', unlockAudio, { once: true });
+
     function createCard(container, wish) {
       const prizeObj = (() => {
-        let t = PRIZES.reduce((s, p) => s + p.weight, 0);
-        let r = Math.random() * t;
-        for (let p of PRIZES) { if (r < p.weight) return p; r -= p.weight; }
+        let total = PRIZES.reduce((sum, p) => sum + p.weight, 0);
+        let rand = Math.random() * total;
+        for (let p of PRIZES) {
+          if (rand < p.weight) return p;
+          rand -= p.weight;
+        }
         return PRIZES[0];
       })();
+
       const wrapper = document.createElement('div');
       wrapper.className = 'card-container';
       wrapper.innerHTML = `
@@ -63,6 +93,7 @@
           </div>
         </div>
       `;
+
       const canvas = wrapper.querySelector('canvas');
       const ctx = canvas.getContext('2d', { willReadFrequently: true });
       let isDrawing = false, isCleared = false;
@@ -86,7 +117,7 @@
         wrapper.classList.add('flipped');
         document.querySelectorAll('.card-container').forEach(c => c !== wrapper && c.classList.add('locked'));
         flipSound.currentTime = 0;
-        flipSound.play().catch(e => console.log('Autoplay prevented:', e));
+        flipSound.play().catch(e => console.log('Play flip error:', e));
         drawCover();
       };
 
@@ -96,15 +127,17 @@
         wrapper.classList.add('flipped');
         document.querySelectorAll('.card-container').forEach(c => c !== wrapper && c.classList.add('locked'));
         flipSound.currentTime = 0;
-        flipSound.play().catch(e => console.log('Autoplay prevented:', e));
+        flipSound.play().catch(e => console.log('Play flip error:', e));
         drawCover();
       };
 
       function scratch(e) {
         if (!isDrawing || isCleared || !wrapper.classList.contains('flipped')) return;
         const rect = canvas.getBoundingClientRect();
-        const x = ((e.clientX || (e.touches && e.touches[0].clientX)) - rect.left) * (canvas.width / rect.width);
-        const y = ((e.clientY || (e.touches && e.touches[0].clientY)) - rect.top) * (canvas.height / rect.height);
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+        const x = (clientX - rect.left) * (canvas.width / rect.width);
+        const y = (clientY - rect.top) * (canvas.height / rect.height);
         ctx.globalCompositeOperation = 'destination-out';
         ctx.beginPath(); ctx.arc(x, y, 25, 0, Math.PI * 2); ctx.fill();
         const imgData = ctx.getImageData(30, 80, 100, 70);
@@ -122,6 +155,7 @@
           }, 400);
         }
       }
+
       canvas.onmousedown = () => isDrawing = true;
       canvas.ontouchstart = (e) => { isDrawing = true; e.preventDefault(); };
       window.onmouseup = () => isDrawing = false;
@@ -152,17 +186,23 @@
       document.getElementById('modal-overlay').style.display = 'none';
       isAnyCardActive = false;
       document.querySelectorAll('.card-container').forEach(c => {
-        if (!c.querySelector('canvas')) { c.style.opacity = "0.2"; c.style.pointerEvents = "none"; }
-        else c.classList.remove('locked');
+        if (!c.querySelector('canvas')) {
+          c.style.opacity = "0.2";
+          c.style.pointerEvents = "none";
+        } else {
+          c.classList.remove('locked');
+        }
       });
     }
 
     function start() {
-      const grid = document.getElementById('grid'); grid.innerHTML = '';
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
       isAnyCardActive = false;
       let shuffled = [...WISHES].sort(() => Math.random() - 0.5);
       for (let i = 0; i < 6; i++) createCard(grid, shuffled[i]);
     }
+
     document.getElementById('reset-btn').onclick = start;
     start();
   </script>
