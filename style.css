@@ -58,7 +58,6 @@ h1 {
   transform: rotateY(180deg); 
 }
 
-/* THIẾT KẾ MẶT TRƯỚC BAO LÌ XÌ */
 .card-front {
   position: absolute; 
   width: 100%; 
@@ -116,7 +115,6 @@ h1 {
   letter-spacing: 2px;
 }
 
-/* Mặt sau */
 .card-back {
   position: absolute; 
   width: 100%; 
