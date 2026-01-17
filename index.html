@@ -37,11 +37,11 @@
     ];
     let isAnyCardActive = false;
 
-    // Âm thanh flip card
-    const flipSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-card-flip-1939.mp3');
-    flipSound.volume = 0.6;
+    // Sử dụng file nhạc cục bộ nhactet.mp3 (đặt cùng thư mục với index.html)
+    const flipSound = new Audio('nhactet.mp3');
+    flipSound.volume = 0.7;
 
-    // Unlock audio trên mobile (fix không nghe tiếng)
+    // Unlock audio trên mobile (rất quan trọng để âm thanh hoạt động)
     let audioUnlocked = false;
     function unlockAudio() {
       if (audioUnlocked) return;
@@ -52,13 +52,13 @@
         .then(() => {
           flipSound.pause();
           flipSound.currentTime = 0;
-          flipSound.volume = 0.6;     // khôi phục âm lượng
-          console.log('Audio đã được mở khóa!');
+          flipSound.volume = 0.7;     // khôi phục âm lượng
+          console.log('Âm thanh cục bộ đã được mở khóa!');
         })
-        .catch(e => console.log('Unlock audio lỗi:', e));
+        .catch(e => console.log('Không mở khóa được âm thanh:', e));
     }
 
-    // Gắn sự kiện unlock khi người dùng tương tác lần đầu
+    // Gắn sự kiện để unlock khi người dùng chạm/click lần đầu
     document.body.addEventListener('click', unlockAudio, { once: true });
     document.body.addEventListener('touchstart', unlockAudio, { once: true });
 
@@ -116,8 +116,10 @@
         isAnyCardActive = true;
         wrapper.classList.add('flipped');
         document.querySelectorAll('.card-container').forEach(c => c !== wrapper && c.classList.add('locked'));
+        
         flipSound.currentTime = 0;
-        flipSound.play().catch(e => console.log('Play flip error:', e));
+        flipSound.play().catch(e => console.log('Lỗi phát nhactet.mp3:', e));
+        
         drawCover();
       };
 
@@ -126,8 +128,10 @@
         if (isAnyCardActive || wrapper.classList.contains('flipped')) return;
         wrapper.classList.add('flipped');
         document.querySelectorAll('.card-container').forEach(c => c !== wrapper && c.classList.add('locked'));
+        
         flipSound.currentTime = 0;
-        flipSound.play().catch(e => console.log('Play flip error:', e));
+        flipSound.play().catch(e => console.log('Lỗi phát nhactet.mp3:', e));
+        
         drawCover();
       };
 
