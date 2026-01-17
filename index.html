@@ -9,13 +9,6 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Nút bật âm thanh & bắt đầu -->
-  <div id="start-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:200; color:white; text-align:center;">
-    <h2 style="font-size:2rem; margin-bottom:20px;">CHÚC MỪNG NĂM MỚI 2026</h2>
-    <p style="margin-bottom:30px;">Tap nút dưới để bật âm thanh và bắt đầu cào lì xì!</p>
-    <button id="start-btn" style="padding:15px 40px; font-size:1.3rem; background:#d4af37; color:#8b0000; border:none; border-radius:50px; font-weight:bold; cursor:pointer;">BẬT ÂM THANH & CHƠI</button>
-  </div>
-
   <h1>LÌ XÌ BÍNH NGỌ 2026 🧧</h1>
   <div id="status-text" class="instruction">Chạm vào bao lì xì để mở vận may!</div>
   <div class="grid" id="grid"></div>
@@ -44,23 +37,32 @@
     ];
     let isAnyCardActive = false;
 
-    // Nhạc cục bộ
+    // File nhạc cục bộ - chỉ 1 instance duy nhất
     const flipSound = new Audio('nhactet.mp3');
     flipSound.volume = 0.7;
 
-    // Unlock & phát nhạc khi nhấn nút bắt đầu
-    document.getElementById('start-btn').onclick = () => {
+    // Unlock audio tự động càng sớm càng tốt (muted silent play để "thả" policy)
+    function tryUnlockAudio() {
+      if (flipSound.dataset.unlocked) return;
+      flipSound.muted = true;
       flipSound.currentTime = 0;
       flipSound.play().then(() => {
-        console.log('Nhạc đã phát thành công!');
-      }).catch(e => {
-        console.error('Lỗi phát nhạc:', e);
+        flipSound.pause();
+        flipSound.currentTime = 0;
+        flipSound.muted = false;
+        flipSound.dataset.unlocked = 'true';
+        console.log('Âm thanh đã unlock tự động!');
+      }).catch(() => {
+        console.log('Cần tap màn hình để unlock âm thanh (browser block autoplay)');
       });
+    }
 
-      // Ẩn màn hình bắt đầu, hiện game
-      document.getElementById('start-screen').style.display = 'none';
-      start();  // Bắt đầu game
-    };
+    // Thử unlock ngay khi load
+    tryUnlockAudio();
+
+    // Nếu vẫn block, tap bất kỳ đâu để unlock (touchend tốt hơn cho mobile)
+    document.body.addEventListener('touchend', tryUnlockAudio, { once: true, passive: true });
+    document.body.addEventListener('click', tryUnlockAudio, { once: true });
 
     function createCard(container, wish) {
       const prizeObj = (() => {
@@ -111,29 +113,24 @@
       }
       document.fonts.ready.then(drawCover);
 
-      wrapper.onclick = () => {
+      // Flip card
+      const flipCard = () => {
         if (isAnyCardActive || wrapper.classList.contains('flipped')) return;
         isAnyCardActive = true;
         wrapper.classList.add('flipped');
         document.querySelectorAll('.card-container').forEach(c => c !== wrapper && c.classList.add('locked'));
-        
+
+        // Phát âm thanh: reset về đầu rồi play (không overlap)
         flipSound.currentTime = 0;
         flipSound.play().catch(e => console.log('Lỗi flip sound:', e));
-        
+
         drawCover();
       };
 
+      wrapper.onclick = flipCard;
       wrapper.ontouchend = (e) => {
         e.preventDefault();
-        if (isAnyCardActive || wrapper.classList.contains('flipped')) return;
-        isAnyCardActive = true;
-        wrapper.classList.add('flipped');
-        document.querySelectorAll('.card-container').forEach(c => c !== wrapper && c.classList.add('locked'));
-        
-        flipSound.currentTime = 0;
-        flipSound.play().catch(e => console.log('Lỗi flip sound touch:', e));
-        
-        drawCover();
+        flipCard();
       };
 
       function scratch(e) {
@@ -157,10 +154,11 @@
             document.getElementById('modal-title').innerText = prizeObj.title;
             document.getElementById('modal-msg').innerText = `Bạn nhận được ${prizeObj.val.toLocaleString()}đ!`;
             document.getElementById('modal-overlay').style.display = 'flex';
-            // Khóa nút TIẾP TỤC
-            document.getElementById('next-btn').disabled = true;
-            document.getElementById('next-btn').style.opacity = '0.5';
-            document.getElementById('next-btn').innerText = 'ĐÃ KHÓA - CHƠI LẠI BẰNG NÚT LÀM MỚI';
+            // Khóa nút tiếp tục
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.disabled = true;
+            nextBtn.style.opacity = '0.5';
+            nextBtn.innerText = 'ĐÃ KHÓA - CHƠI LẠI BẰNG NÚT LÀM MỚI';
           }, 400);
         }
       }
@@ -192,7 +190,6 @@
     }
 
     function nextRound() {
-      // Hàm này giờ không dùng nữa vì nút bị khóa
       document.getElementById('modal-overlay').style.display = 'none';
     }
 
@@ -205,6 +202,7 @@
     }
 
     document.getElementById('reset-btn').onclick = start;
+    start();
   </script>
 </body>
 </html>
