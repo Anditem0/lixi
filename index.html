@@ -10,7 +10,7 @@
 </head>
 <body>
   <h1>LÌ XÌ BÍNH NGỌ 2026 🧧</h1>
-  <div id="status-text" class="instruction">Chạm vào bao lì xì để mở vận may!</div>
+  <div id="status-text" class="instruction">Chạm vào bao lì xì để mở vận may! (Tap màn hình lần đầu để mở âm thanh nếu cần)</div>
   <div class="grid" id="grid"></div>
   <button id="reset-btn">LÀM MỚI BỘ VÉ</button>
 
@@ -37,30 +37,34 @@
     ];
     let isAnyCardActive = false;
 
-    // Sử dụng file nhạc cục bộ nhactet.mp3 (đặt cùng thư mục với index.html)
+    // File nhạc cục bộ
     const flipSound = new Audio('nhactet.mp3');
     flipSound.volume = 0.7;
 
-    // Unlock audio trên mobile (rất quan trọng để âm thanh hoạt động)
+    // Unlock audio (dùng touchend + click để tương thích mobile tốt hơn)
     let audioUnlocked = false;
     function unlockAudio() {
       if (audioUnlocked) return;
       audioUnlocked = true;
+      console.log('Đang thử mở khóa âm thanh...');
       flipSound.currentTime = 0;
-      flipSound.volume = 0;           // silent để unlock
+      flipSound.volume = 0;
       flipSound.play()
         .then(() => {
           flipSound.pause();
           flipSound.currentTime = 0;
-          flipSound.volume = 0.7;     // khôi phục âm lượng
-          console.log('Âm thanh cục bộ đã được mở khóa!');
+          flipSound.volume = 0.7;
+          console.log('Âm thanh đã mở khóa thành công!');
         })
-        .catch(e => console.log('Không mở khóa được âm thanh:', e));
+        .catch(e => {
+          console.error('Lỗi mở khóa âm thanh:', e.message);
+          console.log('Kiểm tra: File nhactet.mp3 có tồn tại không? Đường dẫn đúng?');
+        });
     }
 
-    // Gắn sự kiện để unlock khi người dùng chạm/click lần đầu
+    // Gắn sự kiện unlock (touchend tốt hơn touchstart trên mobile)
+    document.body.addEventListener('touchend', unlockAudio, { once: true, passive: true });
     document.body.addEventListener('click', unlockAudio, { once: true });
-    document.body.addEventListener('touchstart', unlockAudio, { once: true });
 
     function createCard(container, wish) {
       const prizeObj = (() => {
@@ -118,19 +122,23 @@
         document.querySelectorAll('.card-container').forEach(c => c !== wrapper && c.classList.add('locked'));
         
         flipSound.currentTime = 0;
-        flipSound.play().catch(e => console.log('Lỗi phát nhactet.mp3:', e));
+        flipSound.play().catch(e => console.error('Lỗi phát âm thanh flip:', e));
         
         drawCover();
       };
 
       wrapper.ontouchstart = (e) => {
         e.preventDefault();
+      };
+
+      wrapper.ontouchend = (e) => {
         if (isAnyCardActive || wrapper.classList.contains('flipped')) return;
+        isAnyCardActive = true;
         wrapper.classList.add('flipped');
         document.querySelectorAll('.card-container').forEach(c => c !== wrapper && c.classList.add('locked'));
         
         flipSound.currentTime = 0;
-        flipSound.play().catch(e => console.log('Lỗi phát nhactet.mp3:', e));
+        flipSound.play().catch(e => console.error('Lỗi phát âm thanh flip (touchend):', e));
         
         drawCover();
       };
