@@ -9,45 +9,72 @@ body {
   margin: 0; 
   background: #4a0000 radial-gradient(circle, #8b0000 0%, #1a0000 100%);
   font-family: 'Be Vietnam Pro', sans-serif; 
-  display: flex; flex-direction: column; align-items: center;
-  color: #fff; touch-action: manipulation; min-height: 100vh; overflow-x: hidden;
+  display: flex; 
+  flex-direction: column; 
+  align-items: center;
+  color: #fff; 
+  touch-action: manipulation; 
+  min-height: 100vh; 
+  overflow-x: hidden;
 }
 
+/* ==== HEADER ==== */
 h1 { 
-  font-size: 1.8rem; 
+  font-size: 1.3rem; 
   color: var(--light-gold); 
-  margin: 25px 0 5px; 
+  margin: 18px 0 5px; 
   font-weight: 900; 
   text-transform: uppercase; 
   text-shadow: 0 4px 15px rgba(0,0,0,0.6); 
+  text-align: center;
 }
 
 .instruction { 
-  margin-bottom: 20px; 
+  margin-bottom: 15px; 
   color: #feca57; 
   font-weight: bold; 
-  font-size: 0.9rem; 
+  font-size: 0.8rem; 
   text-align: center; 
+  padding: 0 10px;
 }
 
+/* ==== GRID ==== */
 .grid { 
   display: grid; 
-  grid-template-columns: repeat(3, 1fr); 
-  gap: 15px; 
-  max-width: 600px; 
+  grid-template-columns: repeat(2, 1fr);   /* mobile: 2 cột */
+  gap: 12px; 
+  max-width: 380px; 
   padding: 10px; 
 }
 
+@media (min-width: 768px) {
+  .grid { 
+    grid-template-columns: repeat(3, 1fr); /* tablet trở lên: 3 cột */
+    max-width: 600px;
+  }
+
+  h1 { font-size: 1.8rem; }
+  .instruction { font-size: 0.9rem; }
+}
+
+/* ==== CARD ==== */
 .card-container { 
-  width: 165px; 
-  height: 235px; 
+  width: 140px; 
+  height: 200px; 
   perspective: 1000px; 
   cursor: pointer; 
   touch-action: none; 
   transition: transform 0.4s ease, box-shadow 0.4s ease;
   opacity: 0;
-  transform: scale(0.8);
+  transform: scale(0.85);
   animation: appear 0.6s forwards;
+}
+
+@media (min-width: 768px) {
+  .card-container {
+    width: 165px;
+    height: 235px;
+  }
 }
 
 .card-container:nth-child(1) { animation-delay: 0.1s; }
@@ -64,9 +91,12 @@ h1 {
   }
 }
 
-.card-container:hover {
-  transform: scale(1.08) translateY(-10px) rotateY(5deg);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.7), 0 0 30px rgba(212,175,55,0.4);
+/* hover chỉ bật trên desktop */
+@media (hover: hover) and (pointer: fine) {
+  .card-container:hover {
+    transform: scale(1.08) translateY(-10px) rotateY(5deg);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.7), 0 0 30px rgba(212,175,55,0.4);
+  }
 }
 
 .card-inner { 
@@ -78,9 +108,10 @@ h1 {
 }
 
 .card-container.flipped .card-inner { 
-  transform: rotateY(180deg) scale(1.05);
+  transform: rotateY(180deg) scale(1.03);
 }
 
+/* ==== FRONT ==== */
 .card-front {
   position: absolute; 
   width: 100%; 
@@ -93,15 +124,17 @@ h1 {
   background-blend-mode: multiply;
   border: 3px solid var(--gold);
   box-shadow: inset 0 0 15px rgba(0,0,0,0.5), 0 10px 20px rgba(0,0,0,0.5);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center;
   overflow: hidden;
-  transition: transform 0.3s ease;
 }
 
 .card-front::before {
   content: ""; 
   position: absolute; 
-  top: 10px; left: 10px; right: 10px; bottom: 10px;
+  top: 8px; left: 8px; right: 8px; bottom: 8px;
   border: 1px solid rgba(212, 175, 55, 0.3); 
   border-radius: 8px; 
   pointer-events: none;
@@ -109,36 +142,67 @@ h1 {
 
 .card-front .corner {
   position: absolute; 
-  width: 30px; 
-  height: 30px; 
+  width: 24px; 
+  height: 24px; 
   border: 2px solid var(--gold);
 }
 
-.top-left { top: 5px; left: 5px; border-right: none; border-bottom: none; border-radius: 8px 0 0 0; }
-.bottom-right { bottom: 5px; right: 5px; border-left: none; border-top: none; border-radius: 0 0 8px 0; }
+.top-left { 
+  top: 5px; 
+  left: 5px; 
+  border-right: none; 
+  border-bottom: none; 
+  border-radius: 8px 0 0 0; 
+}
+
+.bottom-right { 
+  bottom: 5px; 
+  right: 5px; 
+  border-left: none; 
+  border-top: none; 
+  border-radius: 0 0 8px 0; 
+}
 
 .card-front .emblem {
-  width: 90px; 
-  height: 90px; 
+  width: 70px; 
+  height: 70px; 
   border: 3px double var(--gold);
   border-radius: 50%; 
-  display: flex; align-items: center; justify-content: center;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
   font-family: 'Great Vibes', cursive; 
-  font-size: 3rem; 
+  font-size: 2.4rem; 
   color: var(--gold);
   background: rgba(255,255,255,0.05);
   text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+}
+
+@media (min-width: 768px) {
+  .card-front .emblem {
+    width: 90px;
+    height: 90px;
+    font-size: 3rem;
+  }
 }
 
 .card-front .year-text {
-  font-size: 1.2rem; 
+  font-size: 1rem; 
   font-weight: 900; 
   color: var(--light-gold);
   text-shadow: 1px 1px 2px #000; 
-  letter-spacing: 2px;
+  letter-spacing: 1px;
 }
 
+@media (min-width: 768px) {
+  .card-front .year-text {
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+  }
+}
+
+/* ==== BACK ==== */
 .card-back {
   position: absolute; 
   width: 100%; 
@@ -163,11 +227,18 @@ h1 {
 }
 
 .card-content .amount { 
-  font-size: 1.8rem; 
+  font-size: 1.5rem; 
   font-weight: 900; 
   color: #27ae60; 
 }
 
+@media (min-width: 768px) {
+  .card-content .amount { 
+    font-size: 1.8rem; 
+  }
+}
+
+/* ==== CANVAS ==== */
 canvas { 
   position: absolute; 
   top: 0; 
@@ -176,15 +247,18 @@ canvas {
   touch-action: none; 
 }
 
+/* ==== LOCK ==== */
 .locked { 
   opacity: 0.3; 
   pointer-events: none; 
   filter: grayscale(0.5); 
 }
 
+/* ==== MODAL ==== */
 #modal-overlay { 
   position: fixed; 
-  top: 0; left: 0; 
+  top: 0; 
+  left: 0; 
   width: 100%; 
   height: 100%; 
   background: rgba(0,0,0,0.85); 
@@ -192,13 +266,14 @@ canvas {
   align-items: center; 
   justify-content: center; 
   z-index: 100; 
+  padding: 10px;
 }
 
 .modal { 
   background: #fff; 
   color: #333; 
-  padding: 25px; 
-  border-radius: 20px; 
+  padding: 20px; 
+  border-radius: 16px; 
   text-align: center; 
   max-width: 280px; 
   border: 5px solid var(--gold); 
@@ -208,16 +283,17 @@ canvas {
   background: var(--dark-red); 
   color: #fff; 
   border: none; 
-  padding: 10px 25px; 
+  padding: 10px 20px; 
   border-radius: 50px; 
   cursor: pointer; 
   font-weight: 900; 
-  margin-top: 15px; 
+  margin-top: 12px; 
 }
 
+/* ==== RESET BUTTON ==== */
 #reset-btn { 
-  margin: 25px; 
-  padding: 12px 40px; 
+  margin: 18px; 
+  padding: 10px 30px; 
   background: var(--light-gold); 
   color: #8b0000; 
   border: none; 
