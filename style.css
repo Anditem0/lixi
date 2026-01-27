@@ -301,3 +301,56 @@ canvas {
   font-weight: 900; 
   cursor: pointer; 
 }
+/* ==== FIX CHỮ LỜI CHÚC TRÊN BAO LÌ XÌ ==== */
+.wish-text {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 92%;
+  text-align: center;
+
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  line-height: 1.2;
+
+  color: #fffdf0;
+
+  background: linear-gradient(
+    180deg,
+    rgba(212,175,55,0.95),
+    rgba(241,196,15,0.95)
+  );
+
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.45);
+
+  box-shadow:
+    0 3px 6px rgba(0,0,0,0.5),
+    inset 0 1px 2px rgba(255,255,255,0.6);
+
+  text-shadow:
+    0 1px 2px rgba(0,0,0,0.6),
+    0 0 8px rgba(255,215,0,0.9);
+
+  pointer-events: none;
+}
+
+/* mobile rất nhỏ */
+@media (max-width: 360px) {
+  .wish-text {
+    font-size: 0.7rem;
+    padding: 5px 8px;
+  }
+}
+
+/* tablet / desktop */
+@media (min-width: 768px) {
+  .wish-text {
+    font-size: 0.85rem;
+    padding: 8px 14px;
+  }
+}
+
