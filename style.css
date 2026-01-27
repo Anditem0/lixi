@@ -127,7 +127,8 @@ h1 {
   display: flex; 
   flex-direction: column; 
   align-items: center; 
-  justify-content: center;
+  justify-content: flex-start; /* 👈 QUAN TRỌNG */
+  padding-top: 22px;           /* đẩy emblem + year lên trên */
   overflow: hidden;
 }
 
@@ -301,56 +302,53 @@ canvas {
   font-weight: 900; 
   cursor: pointer; 
 }
-/* ==== FIX CHỮ LỜI CHÚC TRÊN BAO LÌ XÌ ==== */
-.wish-text {
-  position: absolute;
-  bottom: 18px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 92%;
+/* ==== OVERRIDE FIX LỆT CHỮ LỜI CHÚC ==== */
+.card-front .wish-text {
+  position: absolute !important;
+  left: 50% !important;
+  bottom: 16px !important;
+  transform: translateX(-50%) !important;
+
+  width: 90%;
+  max-width: 90%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
 
   font-size: 0.75rem;
   font-weight: 900;
-  letter-spacing: 0.6px;
-  line-height: 1.2;
+  letter-spacing: 0.5px;
+  line-height: 1.25;
 
   color: #fffdf0;
-
   background: linear-gradient(
     180deg,
-    rgba(212,175,55,0.95),
-    rgba(241,196,15,0.95)
+    rgba(212,175,55,0.98),
+    rgba(241,196,15,0.98)
   );
 
   padding: 6px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.45);
+  border: 1px solid rgba(255,255,255,0.55);
 
   box-shadow:
-    0 3px 6px rgba(0,0,0,0.5),
-    inset 0 1px 2px rgba(255,255,255,0.6);
+    0 4px 8px rgba(0,0,0,0.6),
+    inset 0 1px 2px rgba(255,255,255,0.7);
 
   text-shadow:
-    0 1px 2px rgba(0,0,0,0.6),
-    0 0 8px rgba(255,215,0,0.9);
+    0 1px 2px rgba(0,0,0,0.7),
+    0 0 10px rgba(255,215,0,1);
 
   pointer-events: none;
 }
 
 /* mobile rất nhỏ */
 @media (max-width: 360px) {
-  .wish-text {
+  .card-front .wish-text {
     font-size: 0.7rem;
     padding: 5px 8px;
-  }
-}
-
-/* tablet / desktop */
-@media (min-width: 768px) {
-  .wish-text {
-    font-size: 0.85rem;
-    padding: 8px 14px;
   }
 }
 
