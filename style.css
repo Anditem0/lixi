@@ -306,52 +306,60 @@ canvas {
   font-weight: 900; 
   cursor: pointer; 
 }
-/* ==== OVERRIDE FIX LỆT CHỮ LỜI CHÚC ==== */
+
+/* ==== FIX MOBILE LỆCH + BỊ CHE CHỮ ==== */
 .card-front .wish-text {
-  position: absolute !important;
-  left: 50% !important;
-  bottom: 16px !important;
-  transform: translateX(-50%) !important;
+  position: absolute;
+  left: 50%;
+  bottom: 22px;                 /* 🔥 nâng chữ lên khỏi canvas */
+  transform: translateX(-50%);
 
-  width: 90%;
-  max-width: 90%;
+  width: calc(100% - 20px);
+  max-width: calc(100% - 20px);
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin: 0 !important;
+  padding: 6px 10px;
+
+  display: block;
   text-align: center;
 
-  font-size: 0.75rem;
-  font-weight: 900;
-  letter-spacing: 0.5px;
-  line-height: 1.25;
+  font-family: 'Great Vibes', cursive; /* 🔥 cho đúng vibe Tết */
+  font-size: 0.9rem;                   /* 🔥 tăng size mobile */
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  line-height: 1.3;
 
-  color: #fffdf0;
+  color: #b22222;
+
   background: linear-gradient(
     180deg,
-    rgba(212,175,55,0.98),
-    rgba(241,196,15,0.98)
+    rgba(255,215,0,0.95),
+    rgba(241,196,15,0.95)
   );
 
-  padding: 6px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.55);
+  border: 1px solid rgba(255,255,255,0.6);
 
   box-shadow:
-    0 4px 8px rgba(0,0,0,0.6),
+    0 4px 8px rgba(0,0,0,0.5),
     inset 0 1px 2px rgba(255,255,255,0.7);
 
   text-shadow:
-    0 1px 2px rgba(0,0,0,0.7),
-    0 0 10px rgba(255,215,0,1);
+    0 1px 1px rgba(255,255,255,0.6),
+    0 2px 4px rgba(139,0,0,0.6),
+    0 0 10px rgba(255,215,0,0.9);
 
+  z-index: 5;                    /* 🔥 đè lên canvas */
   pointer-events: none;
 }
 
-/* mobile rất nhỏ */
+/* ==== MOBILE NHỎ < 360PX ==== */
 @media (max-width: 360px) {
   .card-front .wish-text {
-    font-size: 0.7rem;
+    font-size: 0.8rem;
     padding: 5px 8px;
+    bottom: 20px;   /* nâng thêm chút */
   }
 }
+
+
