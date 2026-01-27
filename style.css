@@ -7,10 +7,7 @@
 
 body {
   margin: 0; 
-  background: 
-    linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.75)),
-    url('job516-namcha-09.jpg') center/cover no-repeat fixed;
-
+  background: #4a0000 radial-gradient(circle, #8b0000 0%, #1a0000 100%);
   font-family: 'Be Vietnam Pro', sans-serif; 
   display: flex; 
   flex-direction: column; 
@@ -44,7 +41,7 @@ h1 {
 /* ==== GRID ==== */
 .grid { 
   display: grid; 
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, 1fr);   /* mobile: 2 cột */
   gap: 12px; 
   max-width: 380px; 
   padding: 10px; 
@@ -52,7 +49,7 @@ h1 {
 
 @media (min-width: 768px) {
   .grid { 
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr); /* tablet trở lên: 3 cột */
     max-width: 600px;
   }
 
@@ -94,6 +91,7 @@ h1 {
   }
 }
 
+/* hover chỉ bật trên desktop */
 @media (hover: hover) and (pointer: fine) {
   .card-container:hover {
     transform: scale(1.08) translateY(-10px) rotateY(5deg);
@@ -115,26 +113,22 @@ h1 {
 
 /* ==== FRONT ==== */
 .card-front {
-  position: relative;
+  position: absolute; 
   width: 100%; 
   height: 100%; 
   backface-visibility: hidden;
   border-radius: 12px; 
   z-index: 2;
-
   background: linear-gradient(145deg, rgba(230,57,70,0.3), rgba(139,0,0,0.3)), 
               url('https://files.catbox.moe/0q0q0q.jpg') center/cover no-repeat;
-
   background-blend-mode: multiply;
   border: 3px solid var(--gold);
   box-shadow: inset 0 0 15px rgba(0,0,0,0.5), 0 10px 20px rgba(0,0,0,0.5);
-
   display: flex; 
   flex-direction: column; 
   align-items: center; 
-  justify-content: flex-start;
-  padding-top: 22px;
-
+  justify-content: flex-start; /* 👈 QUAN TRỌNG */
+  padding-top: 22px;           /* đẩy emblem + year lên trên */
   overflow: hidden;
 }
 
@@ -186,6 +180,14 @@ h1 {
   margin-bottom: 8px;
 }
 
+@media (min-width: 768px) {
+  .card-front .emblem {
+    width: 90px;
+    height: 90px;
+    font-size: 3rem;
+  }
+}
+
 .card-front .year-text {
   font-size: 1rem; 
   font-weight: 900; 
@@ -194,7 +196,113 @@ h1 {
   letter-spacing: 1px;
 }
 
-/* ==== FIX LỆCH + NỔI BẬT CHỮ LỜI CHÚC ==== */
+@media (min-width: 768px) {
+  .card-front .year-text {
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+  }
+}
+
+/* ==== BACK ==== */
+.card-back {
+  position: absolute; 
+  width: 100%; 
+  height: 100%; 
+  backface-visibility: hidden;
+  border-radius: 12px; 
+  transform: rotateY(180deg); 
+  background: #fffef0;
+  border: 3px solid var(--gold); 
+  overflow: hidden;
+}
+
+.card-content { 
+  position: absolute; 
+  width: 100%; 
+  height: 100%; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center; 
+  text-align: center; 
+}
+
+.card-content .amount { 
+  font-size: 1.5rem; 
+  font-weight: 900; 
+  color: #27ae60; 
+}
+
+@media (min-width: 768px) {
+  .card-content .amount { 
+    font-size: 1.8rem; 
+  }
+}
+
+/* ==== CANVAS ==== */
+canvas { 
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  z-index: 3; 
+  touch-action: none; 
+}
+
+/* ==== LOCK ==== */
+.locked { 
+  opacity: 0.3; 
+  pointer-events: none; 
+  filter: grayscale(0.5); 
+}
+
+/* ==== MODAL ==== */
+#modal-overlay { 
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 100%; 
+  background: rgba(0,0,0,0.85); 
+  display: none; 
+  align-items: center; 
+  justify-content: center; 
+  z-index: 100; 
+  padding: 10px;
+}
+
+.modal { 
+  background: #fff; 
+  color: #333; 
+  padding: 20px; 
+  border-radius: 16px; 
+  text-align: center; 
+  max-width: 280px; 
+  border: 5px solid var(--gold); 
+}
+
+.modal button { 
+  background: var(--dark-red); 
+  color: #fff; 
+  border: none; 
+  padding: 10px 20px; 
+  border-radius: 50px; 
+  cursor: pointer; 
+  font-weight: 900; 
+  margin-top: 12px; 
+}
+
+/* ==== RESET BUTTON ==== */
+#reset-btn { 
+  margin: 18px; 
+  padding: 10px 30px; 
+  background: var(--light-gold); 
+  color: #8b0000; 
+  border: none; 
+  border-radius: 50px; 
+  font-weight: 900; 
+  cursor: pointer; 
+}
+/* ==== OVERRIDE FIX LỆT CHỮ LỜI CHÚC ==== */
 .card-front .wish-text {
   position: absolute !important;
   left: 50% !important;
@@ -236,24 +344,10 @@ h1 {
   pointer-events: none;
 }
 
-/* ==== BACK ==== */
-.card-back {
-  position: absolute; 
-  width: 100%; 
-  height: 100%; 
-  backface-visibility: hidden;
-  border-radius: 12px; 
-  transform: rotateY(180deg); 
-  background: #fffef0;
-  border: 3px solid var(--gold); 
-  overflow: hidden;
-}
-
-/* ==== CANVAS ==== */
-canvas { 
-  position: absolute; 
-  top: 0; 
-  left: 0; 
-  z-index: 3; 
-  touch-action: none; 
+/* mobile rất nhỏ */
+@media (max-width: 360px) {
+  .card-front .wish-text {
+    font-size: 0.7rem;
+    padding: 5px 8px;
+  }
 }
