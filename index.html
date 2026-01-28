@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cào Lì Xì Tết Bính Ngọ 2026</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@100;300;400;500;700;900&family=Pinyon+Script&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec1313",
+                        "gold": "#FFD700",
+                        "gold-dark": "#B8860B",
+                        "vnd-blue": "#006494",
+                        "bg-deep": "#221010"
+                    },
+                    fontFamily: {
+                        "display": ["Be Vietnam Pro", "sans-serif"],
+                        "calligraphy": ["Pinyon Script", "cursive"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .gold-text {
+                background: linear-gradient(to bottom, #FFE08A 0%, #D4AF37 50%, #8A6623 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                text-shadow: 0px 2px 4px rgba(0,0,0,0.3);
+            }
+            .luxury-gradient {
+                background: linear-gradient(135deg, #ec1313 0%, #8b0000 100%);
+            }
+            .lixi-pattern {
+                background-image: radial-gradient(circle at 2px 2px, rgba(255,215,0,0.15) 1px, transparent 0);
+                background-size: 16px 16px;
+            }
+            .victory-aura {
+                background: radial-gradient(circle, rgba(255,215,0,0.4) 0%, rgba(255,215,0,0) 70%);
+            }
+            .shimmer-text {
+                background: linear-gradient(90deg, #ffffff 0%, #ffd700 25%, #ffffff 50%, #ffd700 75%, #ffffff 100%);
+                background-size: 200% auto;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                animation: shimmer 4s linear infinite;
+            }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+
+        @keyframes gentle-pulse {
+            0%, 100% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.05); filter: brightness(1.2); }
+        }
+
+        .animate-gentle-pulse {
+            animation: gentle-pulse 2.5s ease-in-out infinite;
+        }
+
+        /* Hoa mai rơi */
+        @keyframes falling-blossom {
+            0% { transform: translate(0, -10vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translate(100px, 110vh) rotate(360deg); opacity: 0; }
+        }
+        .blossom {
+            position: fixed;
+            top: -50px;
+            pointer-events: none;
+            z-index: 5;
+            color: #FFD700;
+            animation: falling-blossom linear infinite;
+        }
+
+        /* Pháo hoa */
+        @keyframes firework {
+            0% { transform: translate(-50%, 60vh); width: 4px; opacity: 1; }
+            50% { width: 4px; opacity: 1; }
+            100% { transform: translate(-50%, 20vh); width: 400px; opacity: 0; }
+        }
+        .firework-particle {
+            position: fixed;
+            left: 50%;
+            bottom: 0;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            box-shadow: 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff, 0 0 #fff;
+            animation: firework 2s infinite;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #3d1a1a 0%, #1a0808 100%);
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden; /* Ngăn scroll trên mobile */
+            touch-action: manipulation;
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="font-display">
+    <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
